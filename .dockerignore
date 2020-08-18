@@ -1,0 +1,5 @@
+.nvmrc
+.editorconfig
+node_modules
+dist
+docker-compose.yml
