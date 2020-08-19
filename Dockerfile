@@ -8,7 +8,7 @@ RUN yarn install \
 
 RUN rm -rf node_modules \
     && rm -rf lib modules \
-    && rm .babelrc tsconfig.json \
+    && rm tsconfig.json \
     && yarn install --production=true
 
 CMD ["yarn", "serve"]

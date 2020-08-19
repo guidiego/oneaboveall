@@ -4,30 +4,31 @@
    "main": "index.js",
    "license": "MIT",
    "scripts": {
-      "build": "tsc",
-      "serve": "node dist/src/index.js",
-      "start": "nodemon",
-      "orm": "typeorm"
+      "build": "parcel build -t node src/index.ts",
+      "serve": "node dist/index.js",
+      "start": "dotenv -e .env -- nodemon",
+      "orm": "typeorm",
+      "test": "babel src -d dist --extensions '.ts'"
    },
    "devDependencies": {
-      "@types/lodash": "^4.14.159",
       "@types/node": "^8.0.29",
       "class-validator": "^0.12.2",
-      "dotenv": "^8.2.0",
+      "dotenv-cli": "^3.2.0",
       "nodemon": "^2.0.4",
       "tsconfig-paths": "^3.9.0",
-      "type-graphql": "^1.0.0-rc.3",
       "typescript": "^3.9.7"
    },
    "dependencies": {
       "apollo-server": "^2.16.1",
       "graphql": "^15.3.0",
       "graphql-parse-resolve-info": "^4.7.0",
-      "lodash": "^4.17.20",
       "mysql": "^2.14.1",
+      "parcel-bundler": "^1.12.4",
       "pg": "^8.3.0",
       "pg-hstore": "^2.3.3",
       "reflect-metadata": "^0.1.13",
-      "typeorm": "0.2.25"
+      "type-graphql": "^1.0.0-rc.3",
+      "typeorm": "0.2.25",
+      "winston": "^3.3.3"
    }
 }

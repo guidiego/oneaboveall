@@ -1,5 +1,9 @@
 .nvmrc
 .editorconfig
+nodemon.json
+LICENSE
+README.md
+.env
 node_modules
 dist
 docker-compose.yml

@@ -3,7 +3,7 @@
     "module": "commonjs",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "target": "es2016",  // or newer if your node.js version supports this
+    "target": "es2019",
     "strictNullChecks": true,
     "strictFunctionTypes": true,
     "noImplicitThis": true,
@@ -25,8 +25,7 @@
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "lib/*": ["lib/*"],
-      "modules/*": ["modules/*"],
+      "~/*": ["src/*"]
     }
-  },
+  }
 }
