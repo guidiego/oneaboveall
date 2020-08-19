@@ -19,9 +19,11 @@ const main = async () => {
     await connection.synchronize()
   }
 
-  server.listen().then(({ url }) => {
+  server.listen().then(({ url }: { url: string }) => {
     console.log(`🚀 Server ready at ${url}`);
   });
 }
 
-main();
+if (require.main === module) {
+  main();
+}

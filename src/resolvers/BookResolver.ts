@@ -8,7 +8,7 @@ export class BookResolver {
   @Query(() => [Book])
   async books(
     @Fields('Book') select: (keyof Book)[],
-  ) {
+  ): Promise<Book[]> {
     return await Book.find({ select })
   }
 }
