@@ -1,10 +1,10 @@
 export { ResolveTree } from "graphql-parse-resolve-info";
 import { parseResolveInfo, ResolveTree, FieldsByTypeName } from "graphql-parse-resolve-info";
-import { createParamDecorator } from "type-graphql";
+import { createParamDecorator, ResolverData } from "type-graphql";
 
-export function Fields(entity: string): ParameterDecorator {
-  return createParamDecorator(
-    ({info}): ResolveTree | FieldsByTypeName | string[] => {
+export const decoratorFactory =
+  (entity: string) => 
+    ({ info }: ResolverData): ResolveTree | FieldsByTypeName | string[] => {
       const parsedResolveInfoFragment = parseResolveInfo(info);
 
       if (!parsedResolveInfoFragment) {
@@ -17,7 +17,8 @@ export function Fields(entity: string): ParameterDecorator {
 
       return parsedResolveInfoFragment;
     }
-  );
-}
+
+export const Fields = (entity: string): ParameterDecorator =>
+  createParamDecorator(decoratorFactory(entity))
 
 export default Fields;

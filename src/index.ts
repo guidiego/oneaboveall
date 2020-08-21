@@ -4,7 +4,7 @@ import winston from 'winston';
 import { buildSchema } from 'type-graphql';
 import { ApolloServer } from 'apollo-server';
 
-import resolvers from '~/resolvers';
+import resolvers from './resolvers';
 import getLogConfig from './util/log';
 import { ENV, DEBUG } from './config';
 import { ConnectDB } from './util/storage/typeorm';
@@ -24,6 +24,4 @@ const main = async () => {
   });
 }
 
-if (require.main === module) {
-  main();
-}
+main();

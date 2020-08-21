@@ -1,26 +1,28 @@
 version: "3"
 services:
-  # app:
-  #   build: .
-  #   env_file:
-  #     - .env
-  #   ports:
-  #     - "4000:4000"
+  app:
+    build: .
+    env_file:
+      - .env
+    ports:
+      - "${PORT}:${PORT}"
   postgres:
     image: postgres
     ports:
       - "5432:5432"
-    env_file:
-      - .env
+    environment:
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: "${DB_NAME}"
     volumes:
-      - ./docker/postgres/data:/opt/postgres/data
+      - ./data/postgres:/opt/postgres/data
 
   mongo:
     image: mongo
     restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_ROOT_USERNAME: "${DB_USER}"
+      MONGO_INITDB_ROOT_PASSWORD: "${DB_PASSWORD}"
 
   redis:
     image: redis

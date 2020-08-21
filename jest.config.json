@@ -1,0 +1,19 @@
+{
+  "testRegex": "spec.ts$",
+  "moduleFileExtensions": ["js", "ts"],
+  "coverageDirectory": "./coverage",
+  "coverageReporters": ["text", "lcov", "html"],
+  "coveragePathIgnorePatterns": [
+    "/node_modules/",
+    "<rootDir>/src/entity",
+    "<rootDir>/src/types",
+    "<rootDir>/src/inputs",
+    "<rootDir>/src/migration",
+    "<rootDir>/src/entities.ts",
+    "<rootDir>/src/config.ts",
+    "<rootDir>/src/resolvers/index.ts"
+  ],
+  "collectCoverageFrom": [
+    "src/**/*.ts*"
+  ]
+}
