@@ -36,5 +36,11 @@ describe('util/decorators/Fields', () => {
       mockParse(parsedMock);
       expect(mockFactory('Foo')).toEqual(Object.keys(entityMocks.Foo));
     })
+
+    it('should return deeply props Foo.x.Fizz', () => {
+      const newMock = { fieldsByTypeName: { Foo: { bar: parsedMock }}};
+      mockParse(newMock);
+      expect(mockFactory('Foo.bar.Fizz')).toEqual(Object.keys(entityMocks.Fizz));
+    })
   });
 });

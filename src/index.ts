@@ -15,8 +15,8 @@ type MainOpts = {
   logListen?: boolean;
 };
 
-export const main = async ({ env, debug }: MainOpts) => {
-  let listenFn = (_: { url: string }) => {};
+export const main = async ({ env, debug }: MainOpts): Promise<void> => {
+  let listenFn = (_: { url: string }) => {}; // eslint-disable-line
   const connection = await ConnectDB();
   const schema = await buildSchema({ resolvers })
   const logger = winston.createLogger(getLogConfig(env, debug));
@@ -24,15 +24,15 @@ export const main = async ({ env, debug }: MainOpts) => {
 
   if (env !== 'production') {
     await connection.synchronize()
-    listenFn = ({ url }: { url: string }) => {
+    listenFn = ({ url }: { url: string }): void => {
       console.log(`🚀 Server ready at ${url}`);
     };
   }
 
-  server.listen().then(listenFn);
+  return server.listen().then(listenFn);
 };
 
-// @TODO: if require.maini
+// @TODO: if require.main
 /* istanbul ignore next */
 if (ENV !== 'test') {
   main({ env: ENV, debug: DEBUG });

@@ -1,9 +1,13 @@
 import { Resolver, Query, Mutation, Arg } from 'type-graphql';
 
 import { Book } from '~/entity/Book';
+import { queryReturn, IPage, CreatePageObject } from '~/util/query';
 import { Fields } from '~/util/decorators/Fields';
+import { ErrorType, Throw } from '~/util/error';
 import { BaseBookInput, BookUpdateInput } from '~/inputs/BookInput';
-import { queryReturn } from '~/util/query';
+
+const BookPage = CreatePageObject(Book);
+const BookResult = Throw.createResult(Book);
 
 @Resolver(Book)
 export class BookResolver {
@@ -14,18 +18,31 @@ export class BookResolver {
     return await Book.find({ select })
   }
 
-  @Query(queryReturn(Book))
+  @Query(queryReturn(BookResult))
   async book(
     @Arg('id') id: number,
     @Fields('Book') select: (keyof Book)[]
-  ): Promise<Book> {
+  ): Promise<typeof BookResult> {
     const book = await Book.findOne(id, { select });
 
     if (!book) {
-      return {} as Book;
+      return Throw.error(new ErrorType('Not Found'))
     }
 
     return book;
+  }
+
+  @Query(queryReturn(BookPage))
+  async bookPaginate(
+    @Arg('page', { defaultValue: 1 }) page: number,
+    @Arg('limit', { defaultValue: 10 }) take: number,
+    @Fields('BookPage.results.Book') select: (keyof Book)[]
+  ): Promise<IPage<Book>> {
+    const takeMult = page - 1;
+    const skip = take * takeMult;
+    const total = await Book.count({ select });
+    const results = await Book.find({ select, skip, take });
+    return { total, skip, limit: take, page, results };
   }
 
   @Mutation(queryReturn(Book))
@@ -36,15 +53,15 @@ export class BookResolver {
     return await book.save()
   }
 
-  @Mutation(queryReturn(Book))
+  @Mutation(queryReturn(BookResult))
   async updateBook(
     @Arg('id') id: number,
     @Arg('data') data: BookUpdateInput
-  ): Promise<Book> {
+  ): Promise<typeof BookResult> {
     const book = await Book.findOne(id);
 
     if (!book) {
-      return {} as Book;
+      return Throw.error(new ErrorType('Not Found'))
     }
 
     Object.assign(book, data);

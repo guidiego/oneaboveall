@@ -11,7 +11,8 @@
     "<rootDir>/src/migration",
     "<rootDir>/src/entities.ts",
     "<rootDir>/src/config.ts",
-    "<rootDir>/src/resolvers/index.ts"
+    "<rootDir>/src/resolvers/index.ts",
+    "<rootDir>/src/util/query.ts"
   ],
   "collectCoverageFrom": [
     "src/**/*.ts*"
