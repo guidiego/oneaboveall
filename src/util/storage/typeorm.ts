@@ -1,4 +1,4 @@
-import { createConnection, Connection } from "typeorm";
+import { createConnection, Connection, } from "typeorm";
 
 import * as Config from '~/config';
 import * as entities from '~/entities';
@@ -12,5 +12,5 @@ export const ConnectDB = async (config = Config): Promise<Connection> =>
     password: config.DB_PASSWORD,
     database: config.DB_NAME,
     entities: Object.values(entities),
-    logging: config.DEBUG >= 3 ? "all" : false
+    logging: config.DEBUG >= 3 ? "all" : false,
   });

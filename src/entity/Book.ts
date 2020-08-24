@@ -1,7 +1,7 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column } from "typeorm";
-import { ObjectType, Field, ID } from "type-graphql";
+import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, } from "typeorm";
+import { ObjectType, Field, ID, } from "type-graphql";
 
-@Entity({ name: 'book' })
+@Entity({ name: 'book', })
 @ObjectType()
 export class Book extends BaseEntity {
   @Field(() => ID)
@@ -17,7 +17,7 @@ export class Book extends BaseEntity {
   author: string;
 
   @Field(() => Boolean)
-  @Column({ default: false })
+  @Column({ default: false, })
   isPublished: boolean;
 }
 

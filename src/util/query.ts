@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any */
-import { ObjectType, Field } from "type-graphql";
+import { ObjectType, Field, } from "type-graphql";
 
 /* istanbul ignore next */
 export const queryReturn = (something: any) => () => something;
@@ -13,7 +13,7 @@ export const CreatePageObject = (Entity: any) => {
     @Field(queryReturn(Number))
     skip: number;
 
-    @Field(queryReturn([Entity]))
+    @Field(queryReturn([Entity,]))
     results: (typeof Entity)[];
   }
 

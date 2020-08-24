@@ -1,1 +1,1 @@
-export { Book } from './entity/Book';
+export { Book, } from './entity/Book';
