@@ -10,8 +10,8 @@ import { createParamDecorator } from "type-graphql";
 describe('util/decorators/Logger', () => {
   describe('decoratorFn', () => {
     it('should return logger from context', () => {
-      type Ctx = { logger: string };
-      const context = { logger: 'hello '};
+      type Ctx = { logger: string, connection: string };
+      const context = { logger: 'hello', connection: 'bye'};
       const fakeResolveData = { context } as ResolverData<Ctx>; 
       expect(decoratorFn(fakeResolveData)).toBe(context.logger);
     });

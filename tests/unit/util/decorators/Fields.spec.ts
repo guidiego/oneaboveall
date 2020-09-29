@@ -9,8 +9,20 @@ import { ResolverData } from 'type-graphql';
 
 describe('util/decorators/Fields', () => {
   describe('decoratorFactory', () => {
-    const entityMocks = { Foo: { bar: false }, Fizz: { fuzz: true }};
-    const parsedMock = { fieldsByTypeName: entityMocks };
+    const createField = (fieldsByTypeName: AnyObject) => ({ fieldsByTypeName })
+    const createValue = (name: string, value: any) => ({ name, value });
+    const entityMocks = { 
+      Foo: {
+        bar: createValue('bar', false) 
+      },
+      Fizz: {
+        fuzz: createField({ Fuzz: { bar: createValue('bar', true) }}) 
+      },
+      FooBar: {
+        foobar: createField({})
+      } 
+    }
+    const parsedMock = createField(entityMocks);
   
     const mockFactory = (entity: string, info = {}) =>
       decoratorFactory(entity)({ info } as ResolverData);
@@ -30,17 +42,22 @@ describe('util/decorators/Fields', () => {
     it('should return all values', () => {
       mockParse(parsedMock);
       expect(mockFactory('')).toEqual(parsedMock);
-    })
+    });
+
+    it('should return valyes for empty inside fields', () => {
+      mockParse(parsedMock);
+      expect(mockFactory('FooBar')).toEqual(Object.keys(entityMocks.FooBar));
+    });
 
     it('should return only Foo props', () => {
       mockParse(parsedMock);
       expect(mockFactory('Foo')).toEqual(Object.keys(entityMocks.Foo));
-    })
+    });
 
     it('should return deeply props Foo.x.Fizz', () => {
-      const newMock = { fieldsByTypeName: { Foo: { bar: parsedMock }}};
+      const newMock = createField({ Foo: { bar: entityMocks }});
       mockParse(newMock);
-      expect(mockFactory('Foo.bar.Fizz')).toEqual(Object.keys(entityMocks.Fizz));
-    })
+      expect(mockFactory('Foo.bar.Fizz')).toEqual(['fuzz.bar']);
+    });
   });
 });

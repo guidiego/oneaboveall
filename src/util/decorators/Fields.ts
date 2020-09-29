@@ -19,6 +19,24 @@ const getFieldsByTypeName = (entry: EntryTree, parts: string[]): EntryTree => {
   return getFieldsByTypeName((entry.fieldsByTypeName as MapTree)[first], tail);
 }
 
+const flatKeys = (data: MapTree) => {
+  return Object.keys(data).map((key) => {
+    if (!data[key].fieldsByTypeName) {
+      return key;
+    }
+
+    const insideKeys = Object.keys(data[key].fieldsByTypeName);
+    if (!insideKeys.length) {
+      return key;
+    }
+
+    return insideKeys.map((ikey) => {
+      return Object.keys(data[key].fieldsByTypeName[ikey]).map((prop) => {
+        return `${ikey}.${prop}`.toLowerCase();
+      })
+    }).flat();
+  }).flat();
+}
 
 export const decoratorFactory =
   (selectors: string) => 
@@ -31,7 +49,7 @@ export const decoratorFactory =
       }
 
       if (selectors) {
-        return Object.keys(getFieldsByTypeName(parsedResolveInfoFragment, parts));
+        return flatKeys(getFieldsByTypeName(parsedResolveInfoFragment, parts) as MapTree);
       }
 
       return parsedResolveInfoFragment;

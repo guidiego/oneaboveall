@@ -12,7 +12,7 @@ jest.mock('winston', () => ({
 }));
 
 import { getLogConfig, formatPrintF } from '~/util/log';
-import {  format, transports } from 'winston';
+import { format, transports } from 'winston';
 
 describe('util/log', () => {
   afterEach(() => {

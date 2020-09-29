@@ -7,9 +7,13 @@
       "build": "babel src -d dist --extensions .ts",
       "serve": "node dist/index.js",
       "start": "dotenv -e .env -- nodemon",
-      "orm": "typeorm",
+      "orm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
       "lint": "eslint src --ext .ts",
-      "test": "rm -rf ./data && dotenv -e .env.test -- jest"
+      "test": "rm -rf ./data && dotenv -e .env.test -- jest",
+      "migrate": "yarn orm migration:run",
+      "gen:migration": "yarn orm migration:generate",
+      "gen:entity": "plop",
+      "gen:resolver": "plop"
    },
    "devDependencies": {
       "@babel/cli": "^7.10.5",
@@ -29,8 +33,11 @@
       "class-validator": "^0.12.2",
       "dotenv-cli": "^3.2.0",
       "eslint": "^7.7.0",
+      "handlebars-helpers": "^0.10.0",
+      "inquirer-recursive": "^0.0.6",
       "jest": "^26.4.0",
       "nodemon": "^2.0.4",
+      "plop": "^2.7.4",
       "sqlite3": "^5.0.0",
       "tsconfig-paths": "^3.9.0",
       "typescript": "^3.9.7"
@@ -40,10 +47,12 @@
       "graphql": "^15.3.0",
       "graphql-parse-resolve-info": "^4.7.0",
       "lodash.get": "^4.4.2",
+      "mongodb": "^3.6.2",
       "mysql": "^2.14.1",
       "pg": "^8.3.0",
       "pg-hstore": "^2.3.3",
       "reflect-metadata": "^0.1.13",
+      "ts-node": "^9.0.0",
       "type-graphql": "^1.0.0-rc.3",
       "typeorm": "0.2.25",
       "winston": "^3.3.3"

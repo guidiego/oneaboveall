@@ -1,4 +1,4 @@
-jest.mock('../../../src/entities', () => ({ fakeEntities: 'Alo' }));
+jest.mock('../../../../src/entities', () => ({ fakeEntities: 'Alo' }));
 jest.mock('typeorm', () => {
   const actual = jest.requireActual('typeorm');
   return {

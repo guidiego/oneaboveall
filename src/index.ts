@@ -16,20 +16,18 @@ type MainOpts = {
 };
 
 export const main = async ({ env, debug, }: MainOpts): Promise<void> => {
-  let listenFn = (_: { url: string }) => {}; // eslint-disable-line
   const connection = await ConnectDB();
+
   const schema = await buildSchema({ resolvers, })
   const logger = winston.createLogger(getLogConfig(env, debug));
-  const server = new ApolloServer({ schema, context: { logger, }, });
+  const server = new ApolloServer({ schema, context: { logger, connection, }, });
 
-  if (env !== 'production') {
-    await connection.synchronize()
-    listenFn = ({ url, }: { url: string }): void => {
+  return server.listen().then(({ url, }) => {
+    /* istanbul ignore next */
+    if (env !== 'production') {
       console.log(`🚀 Server ready at ${url}`);
-    };
-  }
-
-  return server.listen().then(listenFn);
+    }
+  });
 };
 
 // @TODO: if require.main

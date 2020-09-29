@@ -5,8 +5,8 @@ export class BaseBookInput {
   @Field(() => String)
   title: string;
 
-  @Field(() => String)
-  author: string;
+  @Field(() => Number)
+  author: number;
 }
 
 @InputType()

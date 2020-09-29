@@ -16,17 +16,17 @@ module.exports = {
    "synchronize": true,
    "logging": false,
    "entities": [
-      "dist/src/entity/**/*.ts"
+      "src/entity/**/*.ts"
    ],
    "migrations": [
-      "dist/src/migration/**/*.ts"
+      "src/migration/**/*.ts"
    ],
    "subscribers": [
-      "dist/src/subscriber/**/*.ts"
+      "src/subscriber/**/*.ts"
    ],
    "cli": {
-      "entitiesDir": "dist/src/entity",
-      "migrationsDir": "dist/src/migration",
-      "subscribersDir": "dist/src/subscriber"
+      "entitiesDir": "src/entity",
+      "migrationsDir": "src/migration",
+      "subscribersDir": "src/subscriber"
    }
 }

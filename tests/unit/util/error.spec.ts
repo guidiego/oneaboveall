@@ -6,7 +6,6 @@ jest.mock('type-graphql', () => {
 import "reflect-metadata";
 import { createUnionType } from 'type-graphql';
 import { Throw, resolveType, ErrorType, ErrorObject } from '~/util/error';
-import { resolve } from "url";
 
 describe('util/error', () => {
   const fakeMessage = 'foo';
