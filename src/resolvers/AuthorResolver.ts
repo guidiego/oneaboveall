@@ -1,10 +1,10 @@
-import { Resolver, Query, Mutation, Arg, } from 'type-graphql';
+import { Resolver, Query, Mutation, Arg } from 'type-graphql';
 
-import { Author, } from '~/entity/Author';
+import { Author } from '~/entity/Author';
 import { queryReturn } from '~/util/query';
-import { Fields, } from '~/util/decorators/Fields';
-import { ErrorType, Throw, } from '~/util/error';
-import { BaseAuthorInput, AuthorUpdateInput, } from '~/inputs/AuthorInput';
+import { Fields } from '~/util/decorators/Fields';
+import { ErrorType, Throw } from '~/util/error';
+import { BaseAuthorInput, AuthorUpdateInput } from '~/inputs/AuthorInput';
 import { Repo, RepositoryWrapper } from '~/util/decorators/Repo';
 
 const AuthorResult = Throw.createResult(Author);
@@ -12,7 +12,7 @@ const AuthorResult = Throw.createResult(Author);
 @Resolver(Author)
 export class AuthorResolver {
 
-  @Query(queryReturn([Author,]))
+  @Query(queryReturn([Author]))
   async authors(
     @Fields('Author') select: (keyof Author)[],
     @Repo(Author) AuthorRepo: RepositoryWrapper<Author>,

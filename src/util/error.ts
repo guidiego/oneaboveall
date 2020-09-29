@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any */
-import { ObjectType, Field, createUnionType, } from "type-graphql";
-import { queryReturn, } from "./query";
+import { ObjectType, Field, createUnionType } from "type-graphql";
+import { queryReturn } from "./query";
 
 @ObjectType()
 export class ErrorType {
@@ -18,7 +18,7 @@ export class ErrorObject {
     this.errors = errors;
   }
 
-  @Field(queryReturn([ErrorType,]))
+  @Field(queryReturn([ErrorType]))
   errors: ErrorType[];
 }
 
@@ -32,14 +32,14 @@ export const resolveType = (Entity: any) => (value: any) => {
 
 export class Throw {
   static error(error: ErrorType | ErrorType[]): ErrorObject {
-    const errors = Array.isArray(error) ? error : [error,];
+    const errors = Array.isArray(error) ? error : [error];
     return new ErrorObject(errors);
   }
 
   static createResult(Entity: any) {
     return createUnionType({
       name: `${Entity.name}Result`,
-      types: queryReturn([Entity, ErrorObject,] as const),
+      types: queryReturn([Entity, ErrorObject] as const),
       resolveType: resolveType(Entity),
     });
   }

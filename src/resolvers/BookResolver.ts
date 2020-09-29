@@ -1,18 +1,18 @@
-import { Resolver, Query, Mutation, Arg, } from 'type-graphql';
+import { Resolver, Query, Mutation, Arg } from 'type-graphql';
 
-import { Book, } from '~/entity/Book';
-import { queryReturn, IPage, CreatePageObject, Paginator, } from '~/util/query';
-import { Fields, } from '~/util/decorators/Fields';
-import { Repo, RepositoryWrapper, } from '~/util/decorators/Repo';
-import { ErrorType, Throw, } from '~/util/error';
-import { BaseBookInput, BookUpdateInput, } from '~/inputs/BookInput';
+import { Book } from '~/entity/Book';
+import { queryReturn, IPage, CreatePageObject, Paginator } from '~/util/query';
+import { Fields } from '~/util/decorators/Fields';
+import { Repo, RepositoryWrapper } from '~/util/decorators/Repo';
+import { ErrorType, Throw } from '~/util/error';
+import { BaseBookInput, BookUpdateInput } from '~/inputs/BookInput';
 
 const BookPage = CreatePageObject(Book);
 const BookResult = Throw.createResult(Book);
 
 @Resolver(Book)
 export class BookResolver {
-  @Query(queryReturn([Book,]))
+  @Query(queryReturn([Book]))
   async books(
     @Fields('Book') select: (keyof Book)[],
     @Repo(Book) BookRepo: RepositoryWrapper<Book>,
@@ -37,8 +37,8 @@ export class BookResolver {
 
   @Query(queryReturn(BookPage))
   async bookPaginate(
-    @Arg('page', { defaultValue: 1, }) page: number,
-    @Arg('limit', { defaultValue: 10, }) take: number,
+    @Arg('page', { defaultValue: 1 }) page: number,
+    @Arg('limit', { defaultValue: 10 }) take: number,
     @Fields('BookPage.results.Book') select: (keyof Book)[],
     @Repo(Book) BookRepo: RepositoryWrapper<Book>,
   ): Promise<IPage<Book>> {
@@ -62,7 +62,6 @@ export class BookResolver {
     const book = await Book.findOne(id);
 
     if (!book) {
-      console.log(book);
       return Throw.error(new ErrorType('Not Found'))
     }
 

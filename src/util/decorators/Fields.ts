@@ -1,7 +1,7 @@
-export { ResolveTree, } from "graphql-parse-resolve-info";
+export { ResolveTree } from "graphql-parse-resolve-info";
 
-import { parseResolveInfo, ResolveTree, FieldsByTypeName, } from "graphql-parse-resolve-info";
-import { createParamDecorator, ResolverData, } from "type-graphql";
+import { parseResolveInfo, ResolveTree, FieldsByTypeName } from "graphql-parse-resolve-info";
+import { createParamDecorator, ResolverData } from "type-graphql";
 
 type MapTree = { [str: string]: ResolveTree };
 type EntryTree = ResolveTree | FieldsByTypeName | MapTree;
@@ -40,7 +40,7 @@ const flatKeys = (data: MapTree) => {
 
 export const decoratorFactory =
   (selectors: string) => 
-    ({ info, }: ResolverData): ResolveTree | FieldsByTypeName | string[] => {
+    ({ info }: ResolverData): ResolveTree | FieldsByTypeName | string[] => {
       const parts = selectors.split('.');
       const parsedResolveInfoFragment = parseResolveInfo(info);
 

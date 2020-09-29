@@ -1,4 +1,4 @@
-import { createConnection, Connection, } from "typeorm";
+import { createConnection, Connection } from "typeorm";
 
 import * as Config from '~/config';
 import * as entities from '~/entities';

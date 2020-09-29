@@ -1,10 +1,10 @@
-import { createParamDecorator, ResolverData, } from "type-graphql";
-import { Repository, FindManyOptions, SelectQueryBuilder, } from "typeorm";
+import { createParamDecorator, ResolverData } from "type-graphql";
+import { Repository, FindManyOptions, SelectQueryBuilder } from "typeorm";
 
 export interface RepositoryWrapper<T> {
   count(): Promise<number>;
   find(selection?: string[], opts?: FindManyOptions<T>): Promise<T[]>;
-  findOne(id: any, selection?: string[], opts?: FindManyOptions<T>): Promise<T | undefined>;
+  findOne(id: string | number, selection?: string[], opts?: FindManyOptions<T>): Promise<T | undefined>;
   create<I>(data: I): Promise<T>;
   update<I>(entity: T, data: I): Promise<T>;
   delete(entity: T): Promise<T>;
@@ -15,7 +15,7 @@ const queryBuilder = <T>(
   selectionList: string[],
   opts: FindManyOptions<T>,
 ): SelectQueryBuilder<T> => {
-  const { tableName, } = repo.metadata;
+  const { tableName } = repo.metadata;
   const query = repo.createQueryBuilder(tableName)
   const selections: string[] = [];
   const joins: string[] = [];
@@ -46,12 +46,12 @@ const queryBuilder = <T>(
 
 const mergeWhere = (where: FindManyOptions['where'], newClausure: string): FindManyOptions['where'] => {
   if (Array.isArray(where) && typeof where !== 'string') {
-    return [...where, newClausure,];
+    return [...where, newClausure];
   } else if (!where) {
-    return [newClausure,];
+    return [newClausure];
   }
 
-  return [where, newClausure,];
+  return [where, newClausure];
 }
 
 const RepoWrapper = <T>(repo: Repository<T>): RepositoryWrapper<T> => ({
@@ -61,8 +61,8 @@ const RepoWrapper = <T>(repo: Repository<T>): RepositoryWrapper<T> => ({
   find: async (selection = [], opts = {}) => {
     return await queryBuilder(repo, selection, opts).getMany();
   },
-  findOne: async (id: any, selection: string[] = [], opts = {}): Promise<T | undefined> => {
-    return await queryBuilder(repo, selection, { ...opts, where: mergeWhere(opts.where, `${repo.metadata.tableName}.id = ${id}`),}).getOne();
+  findOne: async (id: string | number, selection: string[] = [], opts = {}): Promise<T | undefined> => {
+    return await queryBuilder(repo, selection, { ...opts, where: mergeWhere(opts.where, `${repo.metadata.tableName}.id = ${id}`)}).getOne();
   },
   create: async (data) => {
     const item = repo.create(data);
@@ -78,7 +78,7 @@ const RepoWrapper = <T>(repo: Repository<T>): RepositoryWrapper<T> => ({
 });
 
 export const decoratorFactory =
-  <T>(entity: T) => ({ context, }: ResolverData<AppContext>) =>
+  <T>(entity: T) => ({ context }: ResolverData<AppContext>): RepositoryWrapper<T> =>
     RepoWrapper<T>(context.connection.getRepository(entity))
     
 
