@@ -1,0 +1,29 @@
+import { InputType, Field } from 'type-graphql';
+
+@InputType()
+export class Base{{EntityName}}Input {
+{{#each EntityProps}}
+  {{#inArray PropInserted "RequiredOnCreation" }}
+    {{#is PropType 'SetInCode'}}
+  @Field()
+    {{else}}
+  @Field(() => {{PropType}})
+    {{/is}}
+  {{PropName}}: {{#is PropType 'SetInCode'}}any{{else}}{{PropType}}{{/is}};
+  {{/inArray}}
+{{/each}}
+}
+
+@InputType()
+export class {{EntityName}}UpdateInput extends Base{{EntityName}}Input {
+{{#each EntityProps}}
+  {{#inArray PropInserted "CouldBeUpdated" }}
+    {{#is PropType 'SetInCode'}}
+  @Field()
+    {{else}}
+  @Field(() => {{PropType}})
+    {{/is}}
+  {{PropName}}: {{#is PropType 'SetInCode'}}any{{else}}{{PropType}}{{/is}};
+  {{/inArray}}
+{{/each}}
+}

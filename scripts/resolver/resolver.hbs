@@ -1,0 +1,97 @@
+import { Resolver, Query, Mutation, Arg } from 'type-graphql';
+
+import { {{EntityName}} } from '~/entity/{{EntityName}}';
+import { queryReturn, IPage, CreatePageObject, Paginator } from '~/util/query';
+import { Fields } from '~/util/decorators/Fields';
+import { Repo, RepositoryWrapper } from '~/util/decorators/Repo';
+import { ErrorType, Throw } from '~/util/error';
+import { Base{{EntityName}}Input, {{EntityName}}UpdateInput } from '~/inputs/{{EntityName}}Input';
+
+const {{EntityName}}Page = CreatePageObject({{EntityName}});
+const {{EntityName}}Result = Throw.createResult({{EntityName}});
+
+@Resolver({{EntityName}})
+export class {{EntityName}}Resolver {
+  {{#inArray ResolverMethods "findOne" }}
+
+  @Query(queryReturn([{{EntityName}}]))
+  async {{lowerCase EntityName}}s(
+    @Fields('{{EntityName}}') select: (keyof {{EntityName}})[],
+    @Repo({{EntityName}}) {{EntityName}}Repo: RepositoryWrapper<{{EntityName}}>,
+  ): Promise<{{EntityName}}[]> {
+    return await {{EntityName}}Repo.find(select);
+  }
+  {{/inArray}}
+  {{#inArray ResolverMethods "findAll" }}
+  @Query(queryReturn({{EntityName}}Result))
+  async {{lowerCase EntityName}}(
+    @Arg('id') id: number,
+    @Repo({{EntityName}}) {{EntityName}}Repo: RepositoryWrapper<{{EntityName}}>,
+    @Fields('{{EntityName}}') select: (keyof {{EntityName}})[]
+  ): Promise<typeof {{EntityName}}Result> {
+    const {{lowerCase EntityName}} = await {{EntityName}}Repo.findOne(id, select);
+
+    if (!{{lowerCase EntityName}}) {
+      return Throw.error(new ErrorType('Not Found'))
+    }
+
+    return {{lowerCase EntityName}};
+  }
+  {{/inArray}}
+  {{#inArray ResolverMethods "paginate" }}
+
+  @Query(queryReturn({{EntityName}}Page))
+  async {{lowerCase EntityName}}Paginate(
+    @Arg('page', { defaultValue: 1 }) page: number,
+    @Arg('limit', { defaultValue: 10 }) take: number,
+    @Fields('{{EntityName}}Page.results.{{EntityName}}') select: (keyof {{EntityName}})[],
+    @Repo({{EntityName}}) {{EntityName}}Repo: RepositoryWrapper<{{EntityName}}>,
+  ): Promise<IPage<{{EntityName}}>> {
+    return await Paginator<{{EntityName}}>({{EntityName}}Repo, page, take, select);
+  }
+  {{/inArray}}
+  {{#inArray ResolverMethods "create" }}
+
+  @Mutation(queryReturn({{EntityName}}))
+  async create{{EntityName}}(
+    @Arg('data') data: Base{{EntityName}}Input,
+    @Repo({{EntityName}}) {{EntityName}}Repo: RepositoryWrapper<{{EntityName}}>,
+  ): Promise<{{EntityName}}> {
+    return {{EntityName}}Repo.create<Base{{EntityName}}Input>(data)
+  }
+  {{/inArray}}
+  {{#inArray ResolverMethods "update" }}
+
+  @Mutation(queryReturn({{EntityName}}Result))
+  async update{{EntityName}}(
+    @Arg('id') id: number,
+    @Arg('data') data: {{EntityName}}UpdateInput,
+    @Repo({{EntityName}}) {{EntityName}}Repo: RepositoryWrapper<{{EntityName}}>,
+  ): Promise<typeof {{EntityName}}Result> {
+    const {{lowerCase EntityName}} = await {{EntityName}}.findOne(id);
+
+    if (!{{lowerCase EntityName}}) {
+      return Throw.error(new ErrorType('Not Found'))
+    }
+
+    return await {{EntityName}}Repo.update<{{EntityName}}UpdateInput>({{lowerCase EntityName}}, data);
+  }
+  {{/inArray}}
+  {{#inArray ResolverMethods "delete" }}
+
+  @Mutation(queryReturn({{EntityName}}Result))
+  async delete{{EntityName}}(
+    @Arg('id') id: number,
+    @Repo({{EntityName}}) {{EntityName}}Repo: RepositoryWrapper<{{EntityName}}>
+  ): Promise<typeof {{EntityName}}Result> {
+    const {{lowerCase EntityName}} = await {{EntityName}}.findOne(id);
+
+    if (!{{lowerCase EntityName}}) {
+      return Throw.error(new ErrorType('Not Found'))
+    }
+
+    return await {{EntityName}}Repo.delete({{lowerCase EntityName}});
+  }
+  {{/inArray}}
+}
+

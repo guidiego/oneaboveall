@@ -1,0 +1,149 @@
+jest.mock('../../../src/util/query', () => {
+  const actual = jest.requireActual('../../../src/util/query');
+  return {
+    ...actual,
+    Paginator: jest.fn(),
+  }
+});
+
+import { {{EntityName}}Resolver } from '~/resolvers/{{EntityName}}Resolver';
+import { {{EntityName}} } from '~/entities';
+import { ErrorObject } from '~/util/error';
+import { Paginator } from '~/util/query';
+
+describe('src/resolvers/{{EntityName}}Resolver', () => {
+  const resolver = new {{EntityName}}Resolver();
+  const fakeResponse = 'foo';
+  const fakeSelect = ['id']; 
+  const fakeId = 99;
+  const fakeRepo = {
+    find: jest.fn(),
+    findOne: jest.fn(),
+    count: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+  }
+
+  beforeEach(() => {
+    fakeRepo.find.mockResolvedValue(fakeResponse);
+    fakeRepo.findOne.mockResolvedValue(fakeResponse);
+    fakeRepo.update.mockResolvedValue(fakeResponse);
+    fakeRepo.create.mockResolvedValue(fakeResponse);
+    fakeRepo.delete.mockResolvedValue(fakeResponse);
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
+  const checkThrowNotFound = (method: keyof (typeof resolver), ...args: any[]) => {
+    it(`should throw NotFound for ${method}`, async () => {
+      const spy = jest.spyOn({{EntityName}}, 'findOne').mockResolvedValue(undefined);
+      const fn: any = resolver[method];
+      const error = await fn(...args);
+
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(error).toBeInstanceOf(ErrorObject);
+      expect(error).toHaveProperty('errors', [{ message: 'Not Found' }])
+    });
+  };
+  {{/inArray}}
+  {{#inArray ResolverMethods "findAll" }}
+
+  describe('.{{lowerCase EntityName}}s()', () => {
+    it('should exec {{lowerCase EntityName}} with correct selection', async () => {
+      const response = await resolver.{{lowerCase EntityName}}s(fakeSelect as (keyof {{EntityName}})[], fakeRepo);
+      expect(response).toBe(fakeResponse);
+      expect(fakeRepo.find).toHaveBeenCalledTimes(1);
+      expect(fakeRepo.find).toHaveBeenCalledWith(fakeSelect);
+    });
+  });
+  {{/inArray}}
+  {{#inArray ResolverMethods "paginate" }}
+
+  describe('.{{lowerCase EntityName}}Paginate()', () => {
+    it('should exec {{lowerCase EntityName}} with correct selection', async () => {
+      (Paginator as jest.Mock).mockResolvedValue(fakeResponse);
+
+      const fakePage = 5;
+      const fakeTake = 5;
+      const response = await resolver.{{lowerCase EntityName}}Paginate(fakePage, fakeTake, fakeSelect as (keyof {{EntityName}})[], fakeRepo);
+
+      expect(response).toBe(fakeResponse);
+      expect(Paginator).toHaveBeenCalledTimes(1);
+      expect(Paginator).toHaveBeenCalledWith(fakeRepo, fakePage, fakeTake, fakeSelect);
+    });
+  });
+  {{/inArray}}
+  {{#inArray ResolverMethods "findOne" }}
+
+  describe('.{{lowerCase EntityName}}()', () => {
+    it('should exec {{lowerCase EntityName}} successfully', async () => {
+      const response = await resolver.{{lowerCase EntityName}}(fakeId, fakeRepo, fakeSelect as (keyof {{EntityName}})[]);
+      expect(response).toBe(fakeResponse);
+      expect(fakeRepo.findOne).toHaveBeenCalledTimes(1);
+      expect(fakeRepo.findOne).toHaveBeenCalledWith(fakeId, fakeSelect);
+    });
+
+    it(`should throw NotFound`, async () => {
+      fakeRepo.findOne.mockResolvedValue(undefined);
+      const error = await resolver.{{lowerCase EntityName}}(fakeId, fakeRepo, fakeSelect as (keyof {{EntityName}})[]);
+
+      expect(fakeRepo.findOne).toHaveBeenCalledTimes(1);
+      expect(fakeRepo.findOne).toHaveBeenCalledWith(fakeId, fakeSelect);
+      expect(error).toBeInstanceOf(ErrorObject);
+      expect(error).toHaveProperty('errors', [{ message: 'Not Found' }])
+    });
+  });
+  {{/inArray}}
+  {{#inArray ResolverMethods "create" }}
+
+  describe('.create{{EntityName}}()', () => {
+    it('should exec {{lowerCase EntityName}} successfully', async () => {
+      const data = { foo: 'bar' } as any;
+      const response = await resolver.create{{EntityName}}(data, fakeRepo);
+      expect(response).toBe(fakeResponse);
+      expect(fakeRepo.create).toHaveBeenCalledTimes(1);
+      expect(fakeRepo.create).toHaveBeenCalledWith(data);
+    });
+  });
+  {{/inArray}}
+  {{#inArray ResolverMethods "update" }}
+
+  describe('.update{{EntityName}}()', () => {
+    it('should exec {{lowerCase EntityName}} successfully', async () => {
+      const fakeOne = 'fakeOne';
+      const data = { foo: 'bar' } as any;
+      const spy = jest.spyOn({{EntityName}}, 'findOne').mockResolvedValue(fakeOne as any);
+      const response = await resolver.update{{EntityName}}(fakeId, data, fakeRepo);
+
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith(fakeId);
+      expect(fakeRepo.update).toHaveBeenCalledTimes(1);
+      expect(fakeRepo.update).toHaveBeenCalledWith(fakeOne, data);
+      expect(response).toBe(fakeResponse);
+    });
+
+    checkThrowNotFound('update{{EntityName}}', fakeId, { foo: 'bar' }, fakeRepo);
+  });
+  {{/inArray}}
+  {{#inArray ResolverMethods "delete" }}
+
+  describe('.delete{{EntityName}}()', () => {
+    it('should exec {{lowerCase EntityName}} successfully', async () => {
+      const fakeOne = 'fakeOne';
+      const spy = jest.spyOn({{EntityName}}, 'findOne').mockResolvedValue(fakeOne as any);
+      const response = await resolver.delete{{EntityName}}(fakeId, fakeRepo);
+
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith(fakeId);
+      expect(fakeRepo.delete).toHaveBeenCalledTimes(1);
+      expect(fakeRepo.delete).toHaveBeenCalledWith(fakeOne);
+      expect(response).toBe(fakeResponse);
+    });
+
+    checkThrowNotFound('delete{{EntityName}}', fakeId, fakeRepo);
+  });
+  {{/inArray}}
+});

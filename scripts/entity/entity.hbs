@@ -1,0 +1,26 @@
+import { Entity, BaseEntity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { ObjectType, Field, ID }from "type-graphql";
+
+@Entity({ name: '{{lowerCase EntityName}}' })
+@ObjectType()
+export class {{EntityName}} extends BaseEntity {
+  @Field(() => ID)
+  @PrimaryGeneratedColumn()
+  id: number;
+{{#each EntityProps}}
+
+  {{#inArray PropInserted "GraphQL" }}
+    {{#is PropType 'SetInCode'}}
+  @Field()
+    {{else}}
+  @Field(() => {{PropType}})
+    {{/is}}
+  {{/inArray}}
+  {{#inArray PropInserted "Database" }}
+  @Column()
+  {{/inArray}}
+  {{PropName}}: {{#is PropType 'SetInCode'}}any{{else}}{{PropType}}{{/is}};
+{{/each}}
+}
+
+export default {{EntityName}};

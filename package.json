@@ -9,7 +9,7 @@
       "start": "dotenv -e .env -- nodemon",
       "orm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
       "lint": "eslint src --ext .ts",
-      "test": "rm -rf ./data && dotenv -e .env.test -- jest",
+      "jest": "NODE_ENV=test node --expose-gc node_modules/.bin/jest --logHeapUsage",
       "migrate": "yarn orm migration:run",
       "gen:migration": "yarn orm migration:generate",
       "gen:entity": "plop",
