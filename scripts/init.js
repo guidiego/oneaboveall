@@ -1,4 +1,3 @@
-const inquirer = require('inquirer');
 const { exec } = require("child_process");
 const { writeFileSync } = require('fs');
 
@@ -42,6 +41,7 @@ const baseDockerCompose = {
 
 console.log('Installing deeps....');
 exec('yarn install && yarn add yaml && git remote get-url origin', (error, stdout) => {
+  const inquirer = require('inquirer');
   const gitRepo = stdout.split(':')[1].replace('.git', '').trim();
   console.log('Preparing project...');
 
