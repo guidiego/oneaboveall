@@ -23,6 +23,14 @@ const DB_INSTALL = {
       restart: "always",
       ports: ["27017:27017"]
     }
+  }, (env) => {
+    env.DB_TYPE = 'mongodb';
+    env.DB_PORT = '27017';
+
+    delete env.DB_USER;
+    delete env.DB_PASSWORD;
+
+    return env;
   }],
   'Oracle': ['oracledb', {}],
 };
@@ -63,7 +71,7 @@ exec('yarn install && yarn add yaml && git remote get-url origin', (error, stdou
     package.name = projectName;
     package.bugs = `https://github.com/${gitRepo}/issues`;
     package.homepage = `https://github.com/${gitRepo}#readme`;
-    
+
     delete package.scripts.setup;
 
     console.log('Saving changes...');
@@ -75,8 +83,14 @@ exec('yarn install && yarn add yaml && git remote get-url origin', (error, stdou
       baseDockerCompose.services = { ...baseDockerCompose.services, ...dbSettings[1]}
       writeFileSync('./docker-compose.yml', require('yaml').stringify(baseDockerCompose), { encoding: 'utf-8' });
 
+      console.log('Creating .env.development...')
+      const envFileData = require('dotenv').config().parsed;
+      const devEnvData = dbSettings[2] ? dbSettings[2](envFileData) : envFileData;
+      const devEnvFile = Object.keys(devEnvData).reduce((a, b) => a + `${b}=${devEnvData[b]}\n`, '');
+      writeFileSync('.env.development', devEnvFile, { encoding: 'utf-8' });
+
       console.log('Clean up...');
-      exec('yarn remove yaml && rm scripts/init.js && git add . && git commit -m "init(project): setup" && git push origin master', () => {
+      exec('yarn remove yaml && yarn remove yaml && rm scripts/init.js && git add . && git commit -m "init(project): setup" && git push origin master', () => {
         console.log('Done!')
       });
     })
