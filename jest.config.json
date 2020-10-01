@@ -10,6 +10,7 @@
     "<rootDir>/src/inputs",
     "<rootDir>/src/migration",
     "<rootDir>/src/entities.ts",
+    "<rootDir>/src/index.ts",
     "<rootDir>/src/config.ts",
     "<rootDir>/src/resolvers/index.ts",
     "<rootDir>/src/util/query.ts"
