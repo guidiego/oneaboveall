@@ -1,4 +1,7 @@
 const resolverCmd = require('../resolver/cmd');
+const package = require('../../package.json');
+
+const isMongo = Object.keys(package.dependencies).indexOf('mongodb') > -1;
 
 exports.prompts = [{
   type: "input",
@@ -41,6 +44,7 @@ exports.actions = ({ hasResolver }) => {
     type: 'add',
     path: './src/entity/{{EntityName}}.ts',
     templateFile: './scripts/entity/entity.hbs',
+    data: { isMongo },
     abortOnFail: true,
   }, {
     type: 'add',

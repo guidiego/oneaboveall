@@ -1,12 +1,22 @@
+{{#if isMongo}}
+import { Entity, BaseEntity, ObjectID, ObjectIdColumn, Column } from "typeorm";
+{{else}}
 import { Entity, BaseEntity, PrimaryGeneratedColumn, Column } from "typeorm";
-import { ObjectType, Field, ID }from "type-graphql";
+{{/if}}
+import { ObjectType, Field, ID } from "type-graphql";
 
 @Entity({ name: '{{lowerCase EntityName}}' })
 @ObjectType()
 export class {{EntityName}} extends BaseEntity {
+{{#if isMongo}}
+  @Field(() => ID)
+  @ObjectIdColumn({ name: '_id' })
+  id?: ObjectID;
+{{else}}
   @Field(() => ID)
   @PrimaryGeneratedColumn()
   id: number;
+{{/if}}
 {{#each EntityProps}}
 
   {{#inArray PropInserted "GraphQL" }}

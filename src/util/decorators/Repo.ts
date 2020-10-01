@@ -1,5 +1,5 @@
 import { createParamDecorator, ResolverData } from "type-graphql";
-import { Repository, FindManyOptions, SelectQueryBuilder } from "typeorm";
+import { Repository, FindManyOptions, JoinOptions, ObjectID } from "typeorm";
 
 export interface RepositoryWrapper<T> {
   count(): Promise<number>;
@@ -10,64 +10,45 @@ export interface RepositoryWrapper<T> {
   delete(entity: T): Promise<T>;
 }
 
-const queryBuilder = <T>(
-  repo: Repository<T>,
-  selectionList: string[],
-  opts: FindManyOptions<T>,
-): SelectQueryBuilder<T> => {
-  const { tableName } = repo.metadata;
-  const query = repo.createQueryBuilder(tableName)
-  const selections: string[] = [];
+const reselect = <T>(tableName: string, selectionList: string[]) => {
+  const select: (keyof T)[] = [];
   const joins: string[] = [];
+  const join: JoinOptions = { alias: tableName, innerJoin: {} };
 
   selectionList.forEach((s) => {
-    if (s.indexOf('.') > -1) {
-      selections.push(s);
+    select.push(s as keyof T);
 
-      const inner = s.split('.')[0];
+    if (s.indexOf('.') > -1) {
+      const inner: string = s.split('.')[0];
       joins.indexOf(inner) == -1 && joins.push(inner);
-    } else {
-      selections.push(`${tableName}.${s}`);
     }
   });
 
-  query.select(selections);
+  joins.forEach((j) => {
+    if (join.innerJoin) {
+      join.innerJoin[j] = `${tableName}.${j}`;
+    }
+  });
 
-  if (opts.where) query.where(opts.where);
-  if (opts.take) query.take(opts.take);
-  if (opts.skip) query.skip(opts.skip);
-
-  if (joins.length > 0) {
-    joins.forEach((j) => query.innerJoin(`${tableName}.${j}`, j))
-  }
-
-  return query;
-}
-
-const mergeWhere = (where: FindManyOptions['where'], newClausure: string): FindManyOptions['where'] => {
-  if (Array.isArray(where) && typeof where !== 'string') {
-    return [...where, newClausure];
-  } else if (!where) {
-    return [newClausure];
-  }
-
-  return [where, newClausure];
-}
+  return { select, join };
+};
 
 const RepoWrapper = <T>(repo: Repository<T>): RepositoryWrapper<T> => ({
   count: async () => {
     return await repo.count();
   },
   find: async (selection = [], opts = {}) => {
-    return await queryBuilder(repo, selection, opts).getMany();
+    const { select, join } = reselect<T>(repo.metadata.tableName, selection);
+    return await repo.find({ select, join, ...opts });
   },
-  findOne: async (id: string | number, selection: string[] = [], opts = {}): Promise<T | undefined> => {
-    return await queryBuilder(repo, selection, { ...opts, where: mergeWhere(opts.where, `${repo.metadata.tableName}.id = ${id}`)}).getOne();
+  findOne: async (id: string | number | ObjectID, selection: string[] = [], opts = {}): Promise<T | undefined> => {
+    const { select, join } = reselect<T>(repo.metadata.tableName, selection);
+    return await repo.findOne(id, { select, join, ...opts });
   },
   create: async (data) => {
     const item = repo.create(data);
     return await repo.save(item);
-  },  
+  },
   update: async (entity, newData): Promise<T> => {
     Object.assign(entity, newData);
     return await repo.save(entity);
@@ -80,7 +61,7 @@ const RepoWrapper = <T>(repo: Repository<T>): RepositoryWrapper<T> => ({
 export const decoratorFactory =
   <T>(entity: T) => ({ context }: ResolverData<AppContext>): RepositoryWrapper<T> =>
     RepoWrapper<T>(context.connection.getRepository(entity))
-    
+
 
 export const Repo = <T>(entity: T): ParameterDecorator =>
   createParamDecorator(decoratorFactory<T>(entity))

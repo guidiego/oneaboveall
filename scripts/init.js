@@ -1,5 +1,5 @@
 const { exec } = require("child_process");
-const { writeFileSync } = require('fs');
+const { writeFileSync, mkdirSync } = require('fs');
 
 const DB_INSTALL = {
   'MySQL': ['mysql', {}],
@@ -88,6 +88,7 @@ exec('yarn install && yarn add yaml && git remote get-url origin', (error, stdou
       const devEnvData = dbSettings[2] ? dbSettings[2](envFileData) : envFileData;
       const devEnvFile = Object.keys(devEnvData).reduce((a, b) => a + `${b}=${devEnvData[b]}\n`, '');
       writeFileSync('.env.development', devEnvFile, { encoding: 'utf-8' });
+      mkdirSync('./src/entity');
 
       console.log('Clean up...');
       exec('yarn remove yaml && yarn remove yaml && rm scripts/init.js && git add . && git commit -m "init(project): setup" && git push origin master', () => {

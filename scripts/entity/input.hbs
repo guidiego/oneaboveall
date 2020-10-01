@@ -11,6 +11,7 @@ export class Base{{EntityName}}Input {
     {{/is}}
   {{PropName}}: {{#is PropType 'SetInCode'}}any{{else}}{{PropType}}{{/is}};
   {{/inArray}}
+
 {{/each}}
 }
 
@@ -25,5 +26,6 @@ export class {{EntityName}}UpdateInput extends Base{{EntityName}}Input {
     {{/is}}
   {{PropName}}: {{#is PropType 'SetInCode'}}any{{else}}{{PropType}}{{/is}};
   {{/inArray}}
+
 {{/each}}
 }

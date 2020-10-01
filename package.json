@@ -12,9 +12,11 @@
     "lint": "eslint src --ext .ts",
     "jest": "NODE_ENV=test node --expose-gc node_modules/.bin/jest --logHeapUsage",
     "migrate": "yarn orm migration:run",
-    "gen:migration": "yarn orm migration:generate",
-    "gen:entity": "plop entity",
-    "gen:resolver": "plop resolver"
+    "dev:orm": "dotenv -e .env.development -- yarn orm",
+    "dev:migrate": "dotenv -e .env.development -- yarn migrate",
+    "gen:migration": "dotenv -e .env.development -- yarn orm migration:generate",
+    "gen:entity": "dotenv -e .env.development -- plop entity",
+    "gen:resolver": "dotenv -e .env.development -- plop resolver"
   },
   "devDependencies": {
     "@babel/cli": "^7.10.5",
